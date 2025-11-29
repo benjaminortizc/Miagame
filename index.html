@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mundo Mia Padilla 2.0</title>
+    <style>
+        /* ESTILOS GENERALES */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #222;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: none;
+            color: white;
+            user-select: none;
+        }
+
+        /* PANTALLAS */
+        .screen {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0; left: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.5s;
+        }
+
+        /* MENÚ PRINCIPAL */
+        #menu-screen {
+            display: flex;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        }
+        h1 { font-size: 2.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); text-align: center; margin-bottom: 20px; }
+        
+        .menu-btn {
+            background: white; color: #ff0055; border: none; padding: 20px; margin: 8px;
+            font-size: 1.2rem; border-radius: 50px; width: 85%; max-width: 320px;
+            font-weight: bold; box-shadow: 0 5px 0 rgba(0,0,0,0.1); cursor: pointer;
+        }
+        .menu-btn:active { transform: scale(0.98); }
+
+        /* BOTÓN SALIR */
+        .back-btn {
+            position: absolute; top: 10px; left: 10px;
+            background: rgba(0,0,0,0.6); color: white; border: none;
+            padding: 8px 15px; border-radius: 20px; font-weight: bold; z-index: 100;
+        }
+
+        /* === JUEGO 1: RUNNER === */
+        #runner-screen { background: #87CEEB; }
+        #runner-ui {
+            position: absolute; top: 20px; right: 20px;
+            font-size: 1.5rem; text-shadow: 2px 2px 0 #000; font-weight: bold;
+        }
+        #runner-msg {
+            position: absolute; top: 50%; width: 100%; text-align: center;
+            font-size: 2rem; display: none; text-shadow: 2px 2px 0 #000;
+        }
+
+        /* === JUEGO 2: POU === */
+        #pou-screen { background: #FFFACD; color: #333; transition: background 1s; }
+        .pou-img-container {
+            width: 280px; height: 280px; /* IMAGEN MÁS GRANDE */
+            margin: 10px; display: flex; justify-content: center; align-items: center;
+            position: relative;
+        }
+        #pou-mia { 
+            width: 100%; height: 100%; object-fit: contain; 
+            transition: transform 0.2s, filter 0.5s; 
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2));
+        }
+        
+        .stat-box { width: 85%; max-width: 350px; margin: 8px 0; }
+        .stat-label { display: flex; justify-content: space-between; font-weight: bold; font-size: 0.9rem; }
+        .progress-bar { width: 100%; height: 25px; background: #ddd; border-radius: 15px; overflow: hidden; border: 3px solid #fff; }
+        .progress-fill { height: 100%; width: 100%; transition: width 0.5s, background 0.5s; }
+        
+        .pou-controls { display: flex; gap: 15px; margin-top: 15px; }
+        .action-btn {
+            padding: 0; border-radius: 50%; border: 4px solid white; font-size: 30px;
+            width: 70px; height: 70px; cursor: pointer; box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            display: flex; align-items: center; justify-content: center;
+        }
+        #pou-status { font-size: 1.2rem; font-weight: bold; margin-top: 10px; min-height: 30px; }
+
+        /* === JUEGO 3: MATEMÁTICAS === */
+        #math-screen { background: #E0F7FA; color: #333; }
+        #math-header { display: flex; justify-content: space-between; width: 90%; font-size: 1.2rem; font-weight: bold; }
+        #math-mia { width: 180px; height: 180px; object-fit: contain; margin: 10px; } /* IMAGEN MÁS GRANDE */
+        
+        #timer-container { width: 90%; height: 10px; background: #ddd; margin: 10px; border-radius: 5px; }
+        #timer-bar { width: 100%; height: 100%; background: #FF0055; border-radius: 5px; transition: width 0.1s linear; }
+
+        #math-problem { font-size: 3.5rem; font-weight: 900; margin: 10px; color: #00796B; }
+        #math-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 90%; max-width: 350px; }
+        .math-option {
+            background: #009688; color: white; padding: 25px; font-size: 1.8rem;
+            border: none; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 #00695C;
+        }
+        .math-option:active { transform: translateY(5px); box-shadow: none; }
+
+    </style>
+</head>
+<body>
+
+    <div id="menu-screen" class="screen">
+        <h1>MUNDO<br>MIA PADILLA</h1>
+        <button class="menu-btn" onclick="startRunner()">🏃 Super Runner (Doble Salto)</button>
+        <button class="menu-btn" onclick="startPou()">🧸 Cuidar a Mia (Tamagotchi)</button>
+        <button class="menu-btn" onclick="startMath()">➕ Reto Matemático (Tiempo)</button>
+    </div>
+
+    <div id="runner-screen" class="screen">
+        <button class="back-btn" onclick="goMenu()">🏠 Salir</button>
+        <div id="runner-ui">Puntos: 0</div>
+        <div id="runner-msg">¡CHOQUE!</div>
+        <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <div id="pou-screen" class="screen">
+        <button class="back-btn" onclick="goMenu()">🏠 Salir</button>
+        <h2 style="margin:0;">Cuida a Mia</h2>
+        <div id="pou-status">Mia está feliz</div>
+        
+        <div class="pou-img-container">
+            <img id="pou-mia" src="mia.png" alt="Mia">
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-label"><span>Hambre</span> <span id="val-food">100%</span></div>
+            <div class="progress-bar"><div id="bar-food" class="progress-fill" style="background:#FF6B6B;"></div></div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label"><span>Diversión</span> <span id="val-fun">100%</span></div>
+            <div class="progress-bar"><div id="bar-fun" class="progress-fill" style="background:#4ECDC4;"></div></div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label"><span>Energía</span> <span id="val-energy">100%</span></div>
+            <div class="progress-bar"><div id="bar-energy" class="progress-fill" style="background:#FFE66D;"></div></div>
+        </div>
+
+        <div class="pou-controls">
+            <button class="action-btn" style="background:#FF6B6B" onclick="pouAction('eat')">🍕</button>
+            <button class="action-btn" style="background:#4ECDC4" onclick="pouAction('play')">⚽</button>
+            <button class="action-btn" style="background:#FFE66D" onclick="pouAction('sleep')">💤</button>
+        </div>
+    </div>
+
+    <div id="math-screen" class="screen">
+        <button class="back-btn" onclick="goMenu()">🏠 Salir</button>
+        <div id="math-header">
+            <span>Nivel: <b id="level-display">1</b></span>
+            <span>Puntos: <b id="score-display">0</b></span>
+        </div>
+        <div id="timer-container"><div id="timer-bar"></div></div>
+        
+        <img id="math-mia" src="mia.png" alt="Mia">
+        
+        <div id="math-problem">2 + 2</div>
+        <div id="math-options"></div>
+    </div>
+
+<script>
+    // === GESTIÓN GLOBAL ===
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+        if(id === 'menu') {
+            document.getElementById('menu-screen').style.display = 'flex';
+        } else {
+            document.getElementById(id).style.display = 'flex';
+        }
+    }
+
+    function goMenu() {
+        gameRunning = false; // Parar runner
+        clearInterval(pouInterval); // Parar Pou
+        clearInterval(mathTimer); // Parar Matematicas
+        showScreen('menu');
+    }
+
+    // Cargar imagen
+    const miaFoto = new Image();
+    miaFoto.src = 'mia.png';
+
+    // ==========================================
+    // JUEGO 1: SUPER RUNNER (DOBLE SALTO + PÁJAROS)
+    // ==========================================
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    let gameRunning = false;
+    let runnerScore = 0;
+    
+    // Mia más grande
+    let miaRun = { 
+        x: 50, y: 0, 
+        w: 100, h: 120, // <--- TAMAÑO AUMENTADO
+        dy: 0, jumpPower: 16, gravity: 0.8, 
+        grounded: false,
+        jumpCount: 0 // Para el doble salto
+    };
+    
+    let obstacles = [];
+
+    function startRunner() {
+        showScreen('runner-screen');
+        resizeRunner();
+        gameRunning = true;
+        runnerScore = 0;
+        obstacles = [];
+        miaRun.y = canvas.height - 150;
+        document.getElementById('runner-msg').style.display = 'none';
+        document.getElementById('runner-ui').innerText = "Puntos: 0";
+        runnerLoop();
+    }
+
+    function resizeRunner() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    
+    // Input: Detecta click o toque
+    function runnerInput() {
+        if(!gameRunning) return;
+        // Lógica de Doble Salto
+        if (miaRun.grounded || miaRun.jumpCount < 2) {
+            miaRun.dy = -miaRun.jumpPower;
+            miaRun.jumpCount++;
+            miaRun.grounded = false;
+        }
+    }
+    
+    window.addEventListener('touchstart', (e) => { 
+        if(document.getElementById('runner-screen').style.display === 'flex' && e.target.className !== 'back-btn') {
+            e.preventDefault(); runnerInput(); 
+        }
+    }, {passive: false});
+    window.addEventListener('mousedown', () => { 
+        if(document.getElementById('runner-screen').style.display === 'flex') runnerInput(); 
+    });
+
+    function runnerLoop() {
+        if(!gameRunning) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Suelo
+        ctx.fillStyle = '#4CAF50';
+        ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+
+        // Física Mia
+        miaRun.dy += miaRun.gravity;
+        miaRun.y += miaRun.dy;
+
+        // Colisión Suelo
+        if(miaRun.y + miaRun.h > canvas.height - 50) {
+            miaRun.y = canvas.height - 50 - miaRun.h;
+            miaRun.dy = 0;
+            miaRun.grounded = true;
+            miaRun.jumpCount = 0; // Resetear saltos al tocar suelo
+        }
+
+        // Dibujar Mia
+        if (miaFoto.complete) {
+            ctx.drawImage(miaFoto, miaRun.x, miaRun.y, miaRun.w, miaRun.h);
+        } else {
+            ctx.fillStyle = '#FF1493';
+            ctx.fillRect(miaRun.x, miaRun.y, miaRun.w, miaRun.h);
+        }
+
+        // Generar Obstáculos (Suelo y Pajaros)
+        if(Math.random() < 0.015) {
+            let type = Math.random() > 0.7 ? 'bird' : 'cactus';
+            
+            if(type === 'cactus') {
+                obstacles.push({
+                    type: 'cactus',
+                    x: canvas.width, 
+                    y: canvas.height - 50 - 60, 
+                    w: 50, h: 60, color: '#333'
+                });
+            } else {
+                // Pájaro: Vuela alto
+                obstacles.push({
+                    type: 'bird',
+                    x: canvas.width, 
+                    y: canvas.height - 160 - (Math.random() * 50), // Altura variable
+                    w: 50, h: 40, color: 'red'
+                });
+            }
+        }
+
+        for(let i=0; i<obstacles.length; i++) {
+            let o = obstacles[i];
+            o.x -= 8; // Velocidad
+
+            // Dibujar obstáculo
+            ctx.fillStyle = o.color;
+            ctx.fillRect(o.x, o.y, o.w, o.h);
+            
+            // Si es pájaro, dibujar alitas simples
+            if(o.type === 'bird') {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(o.x + 10, o.y + 10, 20, 10);
+            }
+
+            // Colisión (Caja de colisión reducida un poco para ser amable)
+            if(miaRun.x + 10 < o.x + o.w && 
+               miaRun.x + miaRun.w - 20 > o.x &&
+               miaRun.y + 10 < o.y + o.h && 
+               miaRun.y + miaRun.h - 10 > o.y) {
+                
+                gameRunning = false;
+                document.getElementById('runner-msg').style.display = 'block';
+                setTimeout(goMenu, 2000);
+            }
+        }
+        
+        // Puntaje
+        if(obstacles.length > 0 && obstacles[0].x < -100) {
+            obstacles.shift();
+            runnerScore++;
+            document.getElementById('runner-ui').innerText = "Puntos: " + runnerScore;
+        }
+
+        requestAnimationFrame(runnerLoop);
+    }
+
+
+    // ==========================================
+    // JUEGO 2: POU AVANZADO
+    // ==========================================
+    let pouStats = { food: 100, fun: 100, energy: 100 };
+    let pouInterval;
+
+    function startPou() {
+        showScreen('pou-screen');
+        pouStats = { food: 100, fun: 100, energy: 100 };
+        document.getElementById('pou-mia').style.filter = "none";
+        document.getElementById('pou-screen').style.background = "#FFFACD"; // Día
+        updatePouUI();
+        
+        if(pouInterval) clearInterval(pouInterval);
+        pouInterval = setInterval(pouTick, 1000);
+    }
+
+    function pouTick() {
+        // Bajan las estadísticas
+        pouStats.food -= 3;
+        pouStats.fun -= 2;
+        pouStats.energy -= 1;
+        updatePouUI();
+    }
+
+    function updatePouUI() {
+        const img = document.getElementById('pou-mia');
+        const screen = document.getElementById('pou-screen');
+        const status = document.getElementById('pou-status');
+
+        // Limites
+        ['food', 'fun', 'energy'].forEach(k => {
+            if(pouStats[k] < 0) pouStats[k] = 0;
+            if(pouStats[k] > 100) pouStats[k] = 100;
+            document.getElementById('val-'+k).innerText = pouStats[k] + '%';
+            document.getElementById('bar-'+k).style.width = pouStats[k] + '%';
+        });
+
+        // Ciclo Día/Noche
+        if(pouStats.energy < 30) {
+            screen.style.background = "#2c3e50"; // Noche
+            screen.style.color = "white";
+        } else {
+            screen.style.background = "#FFFACD"; // Día
+            screen.style.color = "#333";
+        }
+
+        // Estados de ánimo
+        let badStats = 0;
+        if(pouStats.food < 30) badStats++;
+        if(pouStats.fun < 30) badStats++;
+        if(pouStats.energy < 30) badStats++;
+
+        if(badStats === 0) {
+            img.style.filter = "none";
+            status.innerText = "Mia está feliz 😊";
+        } else if (badStats < 3) {
+            img.style.filter = "grayscale(0.5)";
+            status.innerText = "Mia no se siente bien 😐";
+        } else {
+            // Muerte
+            img.style.filter = "grayscale(1) contrast(200%)";
+            status.innerText = "¡Mia se enfermó! Game Over 🚑";
+            clearInterval(pouInterval);
+            setTimeout(() => { alert("Perdiste, cuida mejor a Mia"); goMenu(); }, 1000);
+        }
+    }
+
+    function pouAction(type) {
+        if(document.getElementById('pou-status').innerText.includes("Game Over")) return;
+
+        const img = document.getElementById('pou-mia');
+        img.style.transform = "scale(1.1)";
+        setTimeout(() => img.style.transform = "scale(1)", 150);
+
+        if(type === 'eat') { pouStats.food += 20; pouStats.energy += 5; }
+        if(type === 'play') { pouStats.fun += 25; pouStats.energy -= 10; pouStats.food -= 10; }
+        if(type === 'sleep') { pouStats.energy += 40; pouStats.food -= 10; }
+        updatePouUI();
+    }
+
+
+    // ==========================================
+    // JUEGO 3: MATEMÁTICAS CONTRARELOJ
+    // ==========================================
+    let mathScore = 0;
+    let mathLevel = 1;
+    let mathAnswer = 0;
+    let mathTimer;
+    let timeLeft = 100; // Porcentaje de barra
+
+    function startMath() {
+        showScreen('math-screen');
+        mathScore = 0;
+        mathLevel = 1;
+        updateMathHeader();
+        nextMathProblem();
+    }
+
+    function updateMathHeader() {
+        document.getElementById('score-display').innerText = mathScore;
+        document.getElementById('level-display').innerText = mathLevel;
+    }
+
+    function startTimer() {
+        clearInterval(mathTimer);
+        timeLeft = 100;
+        document.getElementById('timer-bar').style.width = '100%';
+        document.getElementById('timer-bar').style.background = '#FF0055';
+
+        mathTimer = setInterval(() => {
+            timeLeft -= (1 + mathLevel * 0.2); // Más difícil cada nivel
+            document.getElementById('timer-bar').style.width = timeLeft + '%';
+            
+            if(timeLeft <= 0) {
+                clearInterval(mathTimer);
+                alert("¡Tiempo agotado! Puntos: " + mathScore);
+                goMenu();
+            }
+        }, 100);
+    }
+
+    function nextMathProblem() {
+        startTimer();
+        
+        let n1, n2, symbol;
+        // Dificultad por nivel
+        let limit = 10 + (mathLevel * 5);
+        
+        n1 = Math.floor(Math.random() * limit) + 1;
+        n2 = Math.floor(Math.random() * limit) + 1;
+
+        // A partir del nivel 3, hay restas
+        if(mathLevel >= 3 && Math.random() > 0.5) {
+            symbol = "-";
+            if(n1 < n2) { let temp = n1; n1 = n2; n2 = temp; } // Evitar negativos
+            mathAnswer = n1 - n2;
+        } else {
+            symbol = "+";
+            mathAnswer = n1 + n2;
+        }
+
+        document.getElementById('math-problem').innerText = `${n1} ${symbol} ${n2} = ?`;
+
+        // Opciones
+        let options = [mathAnswer];
+        while(options.length < 4) {
+            let fake = mathAnswer + Math.floor(Math.random() * 10) - 5;
+            if(fake !== mathAnswer && fake >= 0 && !options.includes(fake)) options.push(fake);
+        }
+        options.sort(() => Math.random() - 0.5);
+
+        const container = document.getElementById('math-options');
+        container.innerHTML = '';
+        options.forEach(opt => {
+            let btn = document.createElement('button');
+            btn.className = 'math-option';
+            btn.innerText = opt;
+            btn.onclick = () => checkMath(opt);
+            container.appendChild(btn);
+        });
+    }
+
+    function checkMath(ans) {
+        if(ans === mathAnswer) {
+            mathScore += 10;
+            if(mathScore % 50 === 0) mathLevel++; // Subir nivel cada 50 puntos
+            updateMathHeader();
+            
+            // Animación Mia
+            const img = document.getElementById('math-mia');
+            img.style.transform = "rotate(360deg) scale(1.2)";
+            setTimeout(() => img.style.transform = "rotate(0) scale(1)", 400);
+            
+            nextMathProblem();
+        } else {
+            clearInterval(mathTimer);
+            alert("¡Error! La respuesta era " + mathAnswer);
+            goMenu();
+        }
+    }
+
+</script>
+</body>
+</html>
