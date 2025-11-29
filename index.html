@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mundo Mia Padilla 7.0</title>
+    <title>Mundo Mia Padilla 9.0 (Musical)</title>
     <style>
         /* === ESTILOS GENERALES === */
         body {
             margin: 0; padding: 0; background-color: #222; overflow: hidden;
-            font-family: 'Comic Sans MS', 'Verdana', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             touch-action: none; color: white; user-select: none;
         }
         canvas { display: block; width: 100%; height: 100%; }
@@ -20,22 +20,31 @@
         
         /* Botón Salir */
         .back-btn {
-            position: absolute; top: 10px; left: 10px; padding: 8px 15px;
+            position: absolute; top: 10px; left: 10px; padding: 10px 20px;
             background: rgba(255,255,255,0.9); color: #333; border: 3px solid #333;
-            border-radius: 20px; font-weight: bold; z-index: 200; cursor: pointer;
+            border-radius: 20px; font-weight: bold; z-index: 999; cursor: pointer;
             box-shadow: 0 4px 0 rgba(0,0,0,0.2); font-size: 0.9rem;
         }
         .back-btn:active { transform: translateY(4px); box-shadow: none; }
 
+        /* Botón Música (NUEVO) */
+        #music-btn {
+            position: absolute; top: 10px; right: 10px; width: 50px; height: 50px;
+            background: rgba(255,255,255,0.9); border: 3px solid #333; border-radius: 50%;
+            font-size: 24px; cursor: pointer; z-index: 1000; display: flex;
+            align-items: center; justify-content: center; box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+        }
+        #music-btn:active { transform: translateY(4px); box-shadow: none; }
+
         /* === MENÚ PRINCIPAL === */
         #menu-screen {
             display: flex; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            overflow-y: auto; padding-top: 50px; padding-bottom: 50px; box-sizing: border-box;
+            overflow-y: auto; padding-top: 60px; padding-bottom: 50px; box-sizing: border-box;
         }
         h1 { font-size: 2rem; text-shadow: 2px 2px 0 rgba(0,0,0,0.1); text-align: center; margin: 10px; color: #fff; -webkit-text-stroke: 1px #555; }
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 95%; max-width: 400px; padding-bottom: 20px; }
         .menu-btn {
-            background: white; color: #444; border: 3px solid #fff; padding: 15px 5px;
+            background: white; color: #444; border: 3px solid #fff; padding: 10px;
             font-size: 1rem; border-radius: 15px; width: 100%; height: 100px;
             font-weight: bold; box-shadow: 0 5px 0 rgba(0,0,0,0.1); cursor: pointer;
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
@@ -43,79 +52,59 @@
         .menu-btn:active { transform: translateY(3px); box-shadow: none; }
         .icon { font-size: 2rem; }
 
-        /* === JUEGOS === */
+        /* === JUEGOS ESTILOS === */
+        
+        /* Runner */
         #runner-screen { background: #87CEEB; }
+        
+        /* Parkour */
         #parkour-screen { background: linear-gradient(to bottom, #2980b9, #ffffff); }
-        #pou-screen { background: #FFFACD; color: #333; }
-        #math-screen { background: #E0F7FA; color: #333; }
-        #read-screen { background: #FFE082; color: #333; } /* Lectura Palabras */
-        #spell-screen { background: #C5CAE9; color: #333; } /* Completar (Nuevo) */
-
-        /* UI NUEVO JUEGO (COMPLETAR) */
-        #spell-mia { width: 100px; height: 100px; object-fit: contain; margin-bottom: 10px; }
-        #spell-emoji { font-size: 5rem; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
-        #spell-word { 
-            font-size: 3rem; letter-spacing: 10px; font-weight: 900; margin: 20px 0; 
-            background: white; padding: 10px 30px; border-radius: 15px; border: 3px solid #3F51B5; color: #3F51B5;
-        }
-        #spell-options { display: flex; gap: 15px; }
-        .letter-btn {
-            width: 70px; height: 70px; font-size: 2.5rem; font-weight: bold; border: none;
-            border-radius: 15px; background: #FF4081; color: white; box-shadow: 0 5px 0 #C2185B;
-            cursor: pointer;
-        }
-        .letter-btn:active { transform: translateY(5px); box-shadow: none; }
-
-        /* Estilos Lectura (Anterior) */
-        .word-btn {
-            background: #fff; border: 3px solid #FF6F00; padding: 12px; border-radius: 12px; margin: 5px;
-            font-size: 1.5rem; font-weight: bold; width: 80%; max-width: 300px;
-        }
-
-        /* Parkour Controls */
-        #parkour-controls { position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; pointer-events: none; }
+        #parkour-controls { position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; pointer-events: none; z-index: 100; }
         .pk-btn { pointer-events: auto; width: 70px; height: 70px; background: rgba(255,255,255,0.6); border: 3px solid white; border-radius: 50%; color: white; font-size: 30px; display: flex; justify-content: center; align-items: center; }
+        .pk-btn:active { background: rgba(255,255,255,0.9); }
+
+        /* Pou (Estilo Clásico) */
+        #pou-screen { background: #FFFACD; color: #333; }
+        .pou-img-container { width: 220px; height: 220px; margin: 10px; display: flex; justify-content: center; align-items: center; }
+        .stat-box { width: 85%; max-width: 300px; margin: 5px 0; }
+        .progress-bar { width: 100%; height: 20px; background: #ddd; border-radius: 10px; overflow: hidden; border: 2px solid #fff; }
+        .pou-controls { display: flex; gap: 20px; margin-top: 20px; }
+        .action-btn { width: 65px; height: 65px; border-radius: 50%; border: 4px solid white; font-size: 28px; box-shadow: 0 4px 0 rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        /* Math (Estilo Timer) */
+        #math-screen { background: #E0F7FA; color: #333; }
+        .diff-btn { padding: 15px; margin: 10px; width: 80%; font-size: 1.2rem; border: none; border-radius: 15px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
+        #timer-bar { width: 100%; height: 10px; background: #FF0055; border-radius: 5px; transition: width 0.1s linear; }
+        .math-option { background: #009688; color: white; padding: 20px; font-size: 1.5rem; border: none; border-radius: 15px; box-shadow: 0 4px 0 #00695C; }
+        #math-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 90%; max-width: 350px; }
+
+        /* Lectura y Deletreo */
+        #read-screen { background: #FFE082; color: #333; }
+        #spell-screen { background: #C5CAE9; color: #333; }
+        .word-btn { background: #fff; border: 3px solid #FF6F00; padding: 12px; border-radius: 12px; margin: 5px; font-size: 1.5rem; font-weight: bold; width: 80%; }
+        .letter-btn { width: 60px; height: 60px; font-size: 2rem; font-weight: bold; border: none; border-radius: 10px; background: #FF4081; color: white; margin: 5px; }
 
     </style>
 </head>
 <body>
 
+    <audio id="bg-music" loop>
+        <source src="cancion.mp4" type="video/mp4">
+        <source src="cancion.mp3" type="audio/mpeg">
+    </audio>
+
     <div id="menu-screen" class="screen">
+        <button id="music-btn" onclick="toggleMusic()">🔇</button>
+
         <h1>MUNDO<br>MIA PADILLA</h1>
         <div class="menu-grid">
             <button class="menu-btn" onclick="startRunner()"><span class="icon">🏃</span>Salta y Corre</button>
             <button class="menu-btn" onclick="startParkour()"><span class="icon">🤸</span>Parkour Obby</button>
             <button class="menu-btn" onclick="startPou()"><span class="icon">🧸</span>Cuidar a Mia</button>
             <button class="menu-btn" onclick="startMathMenu()"><span class="icon">➕</span>Matemáticas</button>
-            <button class="menu-btn" style="background:#FFF3E0; border-color:#FFB74D;" onclick="startReading()">
-                <span class="icon">📖</span>Leer Palabra
-            </button>
-            <button class="menu-btn" style="background:#E8EAF6; border-color:#7986CB;" onclick="startSpelling()">
-                <span class="icon">✍️</span>Completar
-            </button>
+            <button class="menu-btn" style="background:#FFF3E0; border-color:#FFB74D;" onclick="startReading()"><span class="icon">📖</span>Leer</button>
+            <button class="menu-btn" style="background:#E8EAF6; border-color:#7986CB;" onclick="startSpelling()"><span class="icon">✍️</span>Completar</button>
         </div>
-    </div>
-
-    <div id="spell-screen" class="screen">
-        <button class="back-btn" onclick="goMenu()">🏠 Salir</button>
-        <div style="position:absolute; top:10px; right:10px; font-size:1.5rem;">⭐ <span id="spell-score">0</span></div>
-        
-        <img id="spell-mia" src="mia.png">
-        <div id="spell-emoji">🌞</div>
-        <div id="spell-word">S _ L</div>
-        <p style="margin-top:-10px; color:#555;">¡Completa la palabra!</p>
-        
-        <div id="spell-options">
-            </div>
-    </div>
-
-    <div id="read-screen" class="screen">
-        <button class="back-btn" onclick="goMenu()">🏠 Salir</button>
-        <div style="font-size:4rem; margin:10px;" id="read-emoji">🐶</div>
-        <img src="mia.png" style="width:80px; height:80px; object-fit:contain;">
-        <p>¿Qué es esto?</p>
-        <div id="read-options" style="display:flex; flex-direction:column; align-items:center; width:100%;"></div>
     </div>
 
     <div id="runner-screen" class="screen">
@@ -128,7 +117,10 @@
         <button class="back-btn" onclick="goMenu()">🏠 Salir</button>
         <canvas id="parkourCanvas"></canvas>
         <div id="parkour-controls">
-            <div style="display:flex; gap:15px;"><div class="pk-btn" id="btn-left">⬅️</div><div class="pk-btn" id="btn-right">➡️</div></div>
+            <div style="display:flex; gap:15px;">
+                <div class="pk-btn" id="btn-left">⬅️</div>
+                <div class="pk-btn" id="btn-right">➡️</div>
+            </div>
             <div class="pk-btn" id="btn-jump" style="background:rgba(255,0,85,0.7)">⬆️</div>
         </div>
     </div>
@@ -136,167 +128,143 @@
     <div id="pou-screen" class="screen">
         <button class="back-btn" onclick="goMenu()">🏠 Salir</button>
         <h2 style="margin:5px;">Cuida a Mia</h2>
-        <div style="width:200px; height:200px;"><img id="pou-mia" src="mia.png" style="width:100%; height:100%; object-fit:contain;"></div>
-        <div style="width:80%;">
+        <div class="pou-img-container"><img id="pou-mia" src="mia.png" style="width:100%; height:100%; object-fit:contain;"></div>
+        
+        <div class="stat-box">
             <div style="display:flex; justify-content:space-between;"><span>Hambre</span><span id="val-food">100%</span></div>
-            <div style="width:100%; height:15px; background:#ddd; border-radius:10px;"><div id="bar-food" style="height:100%; width:100%; background:#FF6B6B; border-radius:10px;"></div></div>
-            <br>
-            <div style="display:flex; justify-content:space-between;"><span>Energía</span><span id="val-energy">100%</span></div>
-            <div style="width:100%; height:15px; background:#ddd; border-radius:10px;"><div id="bar-energy" style="height:100%; width:100%; background:#FFE66D; border-radius:10px;"></div></div>
+            <div class="progress-bar"><div id="bar-food" style="height:100%; width:100%; background:#FF6B6B;"></div></div>
         </div>
-        <div style="display:flex; gap:15px; margin-top:15px;">
-            <button onclick="pouAction('eat')" style="font-size:2rem; padding:10px; border-radius:50%; border:none; background:#FF6B6B; cursor:pointer;">🍎</button>
-            <button onclick="pouAction('play')" style="font-size:2rem; padding:10px; border-radius:50%; border:none; background:#4ECDC4; cursor:pointer;">⚽</button>
-            <button onclick="pouAction('sleep')" style="font-size:2rem; padding:10px; border-radius:50%; border:none; background:#FFE66D; cursor:pointer;">💤</button>
+        <div class="stat-box">
+            <div style="display:flex; justify-content:space-between;"><span>Diversión</span><span id="val-fun">100%</span></div>
+            <div class="progress-bar"><div id="bar-fun" style="height:100%; width:100%; background:#4ECDC4;"></div></div>
+        </div>
+        <div class="stat-box">
+            <div style="display:flex; justify-content:space-between;"><span>Energía</span><span id="val-energy">100%</span></div>
+            <div class="progress-bar"><div id="bar-energy" style="height:100%; width:100%; background:#FFE66D;"></div></div>
+        </div>
+
+        <div class="pou-controls">
+            <button class="action-btn" style="background:#FF6B6B" onclick="pouAction('eat')">🍕</button>
+            <button class="action-btn" style="background:#4ECDC4" onclick="pouAction('play')">⚽</button>
+            <button class="action-btn" style="background:#FFE66D" onclick="pouAction('sleep')">💤</button>
         </div>
     </div>
 
     <div id="math-screen" class="screen">
         <button class="back-btn" onclick="goMenu()">🏠 Salir</button>
-        <div id="math-menu" style="text-align:center;"><h2>Nivel:</h2><button class="word-btn" onclick="startMathGame('easy')">Fácil</button><br><button class="word-btn" onclick="startMathGame('hard')">Difícil</button></div>
-        <div id="math-game" style="display:none; flex-direction:column; align-items:center;">
-            <div style="font-size:1.5rem;">Puntos: <span id="math-score-val">0</span></div>
-            <div id="math-problem" style="font-size:3rem; font-weight:900; margin:20px; color:#00796B;"></div>
-            <div id="math-options" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+        
+        <div id="math-menu" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+            <h2>Elige Dificultad:</h2>
+            <button class="diff-btn" style="background:#4CAF50" onclick="startMathGame('easy')">Fácil (1-10)</button>
+            <button class="diff-btn" style="background:#FF9800" onclick="startMathGame('medium')">Medio (1-50)</button>
+            <button class="diff-btn" style="background:#F44336" onclick="startMathGame('hard')">Difícil (Restas)</button>
+        </div>
+
+        <div id="math-game-container" style="display:none; flex-direction:column; align-items:center; width:100%;">
+            <div style="width:90%; margin:10px;"><div id="timer-bar"></div></div>
+            <div id="math-score" style="font-size:1.5rem; font-weight:bold;">Puntos: 0</div>
+            <img src="mia.png" style="width:100px; height:120px; object-fit:contain; margin-top:10px;">
+            <div id="math-problem" style="font-size:3.5rem; font-weight:900; margin:20px; color:#00796B;">2 + 2</div>
+            <div id="math-options"></div>
         </div>
     </div>
 
+    <div id="read-screen" class="screen">
+        <button class="back-btn" onclick="goMenu()">🏠 Salir</button>
+        <div style="font-size:5rem;" id="read-emoji">🐶</div>
+        <p>¿Qué es?</p>
+        <div id="read-options" style="display:flex; flex-direction:column; align-items:center;"></div>
+    </div>
+
+    <div id="spell-screen" class="screen">
+        <button class="back-btn" onclick="goMenu()">🏠 Salir</button>
+        <div style="font-size:1.5rem; position:absolute; top:10px; right:10px;">⭐ <span id="spell-score">0</span></div>
+        <img id="spell-mia" src="mia.png" style="width:100px;">
+        <div id="spell-emoji" style="font-size:4rem;">🌞</div>
+        <div id="spell-word" style="font-size:3rem; letter-spacing:5px; font-weight:bold; margin:10px; color:#3F51B5;">S _ L</div>
+        <div id="spell-options" style="display:flex; justify-content:center;"></div>
+    </div>
+
+
 <script>
     const miaFoto = new Image(); miaFoto.src = 'mia.png';
+    const music = document.getElementById('bg-music');
     let activeGame = null;
-    function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.style.display='none'); document.getElementById(id).style.display='flex'; }
-    function goMenu() { activeGame = null; clearInterval(pouInterval); showScreen('menu-screen'); }
 
-    // ==========================================
-    // 1. NUEVO: COMPLETAR PALABRA
-    // ==========================================
-    const spellDB = [
-        { e:'🌞', w:'SOL', i:1 }, // S_L (O)
-        { e:'👑', w:'CORONA', i:3 }, // COR_NA (O)
-        { e:'🚗', w:'AUTO', i:0 }, // _UTO (A)
-        { e:'🐶', w:'PERRO', i:2 }, // PE_RO (R)
-        { e:'🐱', w:'GATO', i:1 }, // G_TO (A)
-        { e:'🏠', w:'CASA', i:2 }, // CA_A (S)
-        { e:'🍎', w:'MANZANA', i:4 }, // MANZ_NA (A)
-        { e:'🐟', w:'PEZ', i:2 }, // PE_ (Z)
-        { e:'🐮', w:'VACA', i:0 }, // _ACA (V)
-        { e:'⚽', w:'GOL', i:2 } // GO_ (L)
-    ];
-    let spellScore = 0;
-
-    function startSpelling() {
-        showScreen('spell-screen');
-        spellScore = 0;
-        document.getElementById('spell-score').innerText = "0";
-        nextSpell();
-    }
-
-    function nextSpell() {
-        // Elegir palabra aleatoria
-        const data = spellDB[Math.floor(Math.random() * spellDB.length)];
-        const correctLetter = data.w[data.i];
-        
-        document.getElementById('spell-emoji').innerText = data.e;
-        
-        // Crear visualización con guión bajo (S _ L)
-        let displayWord = data.w.split('');
-        displayWord[data.i] = '_';
-        document.getElementById('spell-word').innerText = displayWord.join(' ');
-        
-        // Generar opciones (Correcta + 2 incorrectas)
-        const alphabet = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
-        let opts = [correctLetter];
-        while(opts.length < 3) {
-            let rand = alphabet[Math.floor(Math.random() * alphabet.length)];
-            if(!opts.includes(rand)) opts.push(rand);
+    // === GESTIÓN MÚSICA ===
+    function toggleMusic() {
+        if(music.paused) {
+            music.play().then(()=>{
+                document.getElementById('music-btn').innerText = "🔊";
+            }).catch(e=>alert("Toca la pantalla primero para activar sonido"));
+        } else {
+            music.pause();
+            document.getElementById('music-btn').innerText = "🔇";
         }
-        opts.sort(() => Math.random() - 0.5);
+    }
+    
+    function ensureMusicPlaying() {
+        if(music.paused) {
+            music.play().then(()=>{
+                document.getElementById('music-btn').innerText = "🔊";
+            }).catch(()=>{
+                // Autoplay bloqueado, se activará al hacer click en el juego
+            });
+        }
+    }
 
-        // Dibujar botones
-        const container = document.getElementById('spell-options');
-        container.innerHTML = '';
-        opts.forEach(letter => {
-            let btn = document.createElement('button');
-            btn.className = 'letter-btn';
-            btn.innerText = letter;
-            btn.onclick = () => {
-                if(letter === correctLetter) {
-                    spellScore++;
-                    document.getElementById('spell-score').innerText = spellScore;
-                    document.getElementById('spell-word').innerText = data.w.split('').join(' '); // Completar visualmente
-                    document.getElementById('spell-word').style.color = '#4CAF50';
-                    document.getElementById('spell-word').style.borderColor = '#4CAF50';
-                    
-                    // Animación feliz de Mia
-                    const img = document.getElementById('spell-mia');
-                    img.style.transform = "rotate(360deg)";
-                    
-                    setTimeout(() => {
-                        document.getElementById('spell-word').style.color = '#3F51B5';
-                        document.getElementById('spell-word').style.borderColor = '#3F51B5';
-                        img.style.transform = "rotate(0deg)";
-                        nextSpell();
-                    }, 1000);
-                } else {
-                    btn.style.background = '#F44336'; // Rojo error
-                    setTimeout(() => btn.style.background = '#FF4081', 500);
-                    alert("¡Ups! Intenta otra letra.");
-                }
-            };
-            container.appendChild(btn);
-        });
+    // === GESTIÓN PANTALLAS ===
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function goMenu() {
+        activeGame = null;
+        clearInterval(pouInterval);
+        clearInterval(mathTimer);
+        showScreen('menu-screen');
     }
 
     // ==========================================
-    // 2. LEER PALABRA
-    // ==========================================
-    const readDB = [
-        {e:'🍌', ok:'BANANA', bad:['MANZANA','PERA']},
-        {e:'🎈', ok:'GLOBO', bad:['PELOTA','SOL']},
-        {e:'🚲', ok:'BICICLETA', bad:['AUTO','MOTO']},
-        {e:'📚', ok:'LIBRO', bad:['LAPIZ','MESA']}
-    ];
-    function startReading() {
-        showScreen('read-screen');
-        nextReading();
-    }
-    function nextReading() {
-        const data = readDB[Math.floor(Math.random() * readDB.length)];
-        document.getElementById('read-emoji').innerText = data.e;
-        let opts = [data.ok, ...data.bad].sort(()=>Math.random()-0.5);
-        document.getElementById('read-options').innerHTML = opts.map(w=>`<button class="word-btn" onclick="if('${w}'=='${data.ok}'){alert('¡Bien!');nextReading();}else{alert('Ups');}">${w}</button>`).join('');
-    }
-
-    // ==========================================
-    // 3. RUNNER (CORREGIDO)
+    // 1. RUNNER (Funcional)
     // ==========================================
     const runCanvas = document.getElementById('runnerCanvas');
     const runCtx = runCanvas.getContext('2d');
     let miaRun = {x:50, y:0, w:80, h:100, dy:0, j:16, g:0.8, gr:false, jc:0};
-    let runObs = [], runScore = 0, floorY = 0;
+    let runObs=[], runScore=0, floorY=0;
 
     function startRunner() {
+        ensureMusicPlaying();
         activeGame = 'runner'; showScreen('runner-screen');
         runCanvas.width = window.innerWidth; runCanvas.height = window.innerHeight;
-        floorY = runCanvas.height - 100; // Suelo seguro
-        miaRun.y = floorY - miaRun.h;
-        runObs = []; runScore = 0;
-        document.getElementById('runner-score').innerText = "0";
+        floorY = runCanvas.height - 100; miaRun.y = floorY - miaRun.h;
+        runObs=[]; runScore=0; document.getElementById('runner-score').innerText="0";
         runLoop();
     }
     
-    window.addEventListener('touchstart', e=>{if(activeGame=='runner'&&!e.target.className.includes('back')) {if(miaRun.gr||miaRun.jc<2){miaRun.dy=-miaRun.j; miaRun.jc++; miaRun.gr=false;}}});
-    
+    function doRunJump() {
+        if(activeGame === 'runner' && (miaRun.gr || miaRun.jc < 2)) {
+            miaRun.dy = -miaRun.j; miaRun.jc++; miaRun.gr = false;
+        }
+    }
+    window.addEventListener('touchstart', (e) => { 
+        if(activeGame === 'runner' && !e.target.className.includes('back-btn')) { e.preventDefault(); doRunJump(); }
+    }, {passive:false});
+    window.addEventListener('mousedown', (e) => { 
+        if(activeGame === 'runner' && !e.target.className.includes('back-btn')) { doRunJump(); }
+    });
+
     function runLoop() {
         if(activeGame !== 'runner') return;
         runCtx.clearRect(0,0,runCanvas.width, runCanvas.height);
-        runCtx.fillStyle='#4CAF50'; runCtx.fillRect(0, floorY, runCanvas.width, runCanvas.height-floorY); // Suelo
+        runCtx.fillStyle='#4CAF50'; runCtx.fillRect(0, floorY, runCanvas.width, runCanvas.height-floorY);
         
         miaRun.dy += miaRun.g; miaRun.y += miaRun.dy;
         if(miaRun.y+miaRun.h > floorY) { miaRun.y=floorY-miaRun.h; miaRun.dy=0; miaRun.gr=true; miaRun.jc=0; }
         if(miaFoto.complete) runCtx.drawImage(miaFoto, miaRun.x, miaRun.y, miaRun.w, miaRun.h);
         
-        if(Math.random()<0.02) runObs.push({x:runCanvas.width+50, y:floorY-60, w:50, h:60});
+        if(Math.random()<0.015) runObs.push({x:runCanvas.width+50, y:floorY-60, w:50, h:60});
         
         runObs.forEach(o => {
             o.x -= 7; runCtx.fillStyle='#333'; runCtx.fillRect(o.x, o.y, o.w, o.h);
@@ -310,34 +278,37 @@
     }
 
     // ==========================================
-    // 4. PARKOUR
+    // 2. PARKOUR (Funcional)
     // ==========================================
     const pkCanvas = document.getElementById('parkourCanvas');
     const pkCtx = pkCanvas.getContext('2d');
     let pkMia = {x:100, y:0, w:50, h:70, vx:0, vy:0, j:14, g:0.8, gr:false}, camX=0, pkPlats=[], pkKeys={l:false, r:false};
     
     function startParkour() {
+        ensureMusicPlaying();
         activeGame = 'parkour'; showScreen('parkour-screen');
         pkCanvas.width = window.innerWidth; pkCanvas.height = window.innerHeight;
         let baseH = pkCanvas.height - 120;
         pkMia.x=100; pkMia.y=baseH-100; pkMia.vy=0; camX=0;
         pkPlats = [
-            {x:0, y:baseH, w:400, h:150, c:'#66BB6A'}, 
-            {x:500, y:baseH-50, w:120, h:30, c:'#42A5F5'},
-            {x:700, y:baseH-120, w:100, h:30, c:'#FFA726'},
-            {x:900, y:baseH-120, w:100, h:30, c:'#FFA726'},
-            {x:1100, y:baseH-30, w:200, h:30, c:'#AB47BC'},
-            {x:1400, y:baseH-150, w:80, h:30, c:'#EF5350'},
-            {x:1800, y:baseH-50, w:300, h:150, c:'#8BC34A'},
-            {x:2200, y:baseH-80, w:50, h:200, c:'gold', win:true}
+            {x:0, y:baseH, w:400, h:150, c:'#66BB6A'}, {x:500, y:baseH-50, w:120, h:30, c:'#42A5F5'},
+            {x:700, y:baseH-120, w:100, h:30, c:'#FFA726'}, {x:900, y:baseH-120, w:100, h:30, c:'#FFA726'},
+            {x:1100, y:baseH-30, w:200, h:30, c:'#AB47BC'}, {x:1400, y:baseH-150, w:80, h:30, c:'#EF5350'},
+            {x:1800, y:baseH-50, w:300, h:150, c:'#8BC34A'}, {x:2200, y:baseH-80, w:50, h:200, c:'gold', win:true}
         ];
         pkLoop();
     }
     
-    const setPK=(k,v)=>(e)=>{e.preventDefault(); pkKeys[k]=v;};
-    document.getElementById('btn-left').ontouchstart=setPK('l',true); document.getElementById('btn-left').ontouchend=setPK('l',false);
-    document.getElementById('btn-right').ontouchstart=setPK('r',true); document.getElementById('btn-right').ontouchend=setPK('r',false);
-    document.getElementById('btn-jump').ontouchstart=(e)=>{e.preventDefault(); if(pkMia.gr) pkMia.vy=-pkMia.j;};
+    function setupBtn(id, downFn, upFn) {
+        const el = document.getElementById(id);
+        el.ontouchstart = (e) => { e.preventDefault(); downFn(); };
+        el.ontouchend = (e) => { e.preventDefault(); upFn(); };
+        el.onmousedown = (e) => { e.preventDefault(); downFn(); };
+        el.onmouseup = (e) => { e.preventDefault(); upFn(); };
+    }
+    setupBtn('btn-left', () => pkKeys.l=true, () => pkKeys.l=false);
+    setupBtn('btn-right', () => pkKeys.r=true, () => pkKeys.r=false);
+    setupBtn('btn-jump', () => { if(pkMia.gr) pkMia.vy = -pkMia.j; }, () => {});
     
     function pkLoop() {
         if(activeGame !== 'parkour') return;
@@ -363,20 +334,117 @@
         requestAnimationFrame(pkLoop);
     }
 
-    // 5. POU & 6. MATH (Lógica Básica)
-    let pouStats={f:100,e:100}, pouInterval;
-    function startPou(){ showScreen('pou-screen'); pouStats={f:100,e:100}; pouUpd(); pouInterval=setInterval(()=>{pouStats.f-=2;pouStats.e-=1;pouUpd()},1000); }
-    function pouUpd(){ document.getElementById('bar-food').style.width=Math.max(0,pouStats.f)+'%'; document.getElementById('bar-energy').style.width=Math.max(0,pouStats.e)+'%'; }
-    function pouAction(t){ if(t=='eat')pouStats.f+=20; if(t=='sleep')pouStats.e+=20; pouUpd(); const i=document.getElementById('pou-mia'); i.style.transform='scale(1.1)'; setTimeout(()=>i.style.transform='scale(1)',150); }
+    // ==========================================
+    // 3. POU (Funcional)
+    // ==========================================
+    let pouStats = { f: 100, fun: 100, e: 100 }, pouInterval;
 
-    function startMathMenu(){ showScreen('math-screen'); document.getElementById('math-menu').style.display='block'; document.getElementById('math-game').style.display='none'; }
-    function startMathGame(mode){
-        document.getElementById('math-menu').style.display='none'; document.getElementById('math-game').style.display='flex';
-        let n1=Math.floor(Math.random()*10)+1, n2=Math.floor(Math.random()*10)+1, ans=n1+n2;
-        document.getElementById('math-problem').innerText = `${n1} + ${n2} = ?`;
-        let opts=[ans, ans+1, ans-1, ans+2].sort(()=>Math.random()-0.5);
-        document.getElementById('math-options').innerHTML = opts.map(o=>`<button class="word-btn" onclick="if(${o}==${ans}){alert('¡Bien!');startMathGame('${mode}');}else{alert('Mal');}">${o}</button>`).join('');
+    function startPou() {
+        ensureMusicPlaying();
+        showScreen('pou-screen');
+        pouStats = { f: 100, fun: 100, e: 100 };
+        updatePouUI();
+        if(pouInterval) clearInterval(pouInterval);
+        pouInterval = setInterval(() => {
+            pouStats.f -= 2; pouStats.fun -= 3; pouStats.e -= 1;
+            updatePouUI();
+        }, 1000);
     }
+
+    function updatePouUI() {
+        ['f', 'fun', 'e'].forEach(k => { if(pouStats[k] < 0) pouStats[k] = 0; if(pouStats[k] > 100) pouStats[k] = 100; });
+        document.getElementById('bar-food').style.width = pouStats.f + '%';
+        document.getElementById('bar-fun').style.width = pouStats.fun + '%';
+        document.getElementById('bar-energy').style.width = pouStats.e + '%';
+    }
+
+    function pouAction(type) {
+        const img = document.getElementById('pou-mia');
+        img.style.transform = "scale(1.2)"; setTimeout(() => img.style.transform = "scale(1)", 200);
+        if(type === 'eat') { pouStats.f += 20; pouStats.e += 5; }
+        if(type === 'play') { pouStats.fun += 20; pouStats.e -= 10; pouStats.f -= 10; }
+        if(type === 'sleep') { pouStats.e += 30; pouStats.f -= 5; }
+        updatePouUI();
+    }
+
+    // ==========================================
+    // 4. MATEMÁTICAS (Funcional)
+    // ==========================================
+    let mathDiff, mathScore, mathAnswer, mathTimer, timeLeft;
+
+    function startMathMenu() {
+        ensureMusicPlaying();
+        showScreen('math-screen');
+        document.getElementById('math-menu').style.display = 'flex';
+        document.getElementById('math-game-container').style.display = 'none';
+    }
+
+    function startMathGame(difficulty) {
+        mathDiff = difficulty; mathScore = 0;
+        document.getElementById('math-menu').style.display = 'none';
+        document.getElementById('math-game-container').style.display = 'flex';
+        document.getElementById('math-score').innerText = "Puntos: 0";
+        nextMathProblem();
+    }
+
+    function nextMathProblem() {
+        clearInterval(mathTimer);
+        timeLeft = 100; document.getElementById('timer-bar').style.width='100%';
+        let decay = mathDiff=='easy' ? 0.5 : (mathDiff=='medium' ? 1 : 2.5);
+        mathTimer = setInterval(()=>{
+            timeLeft -= decay; document.getElementById('timer-bar').style.width=timeLeft+'%';
+            if(timeLeft<=0) { clearInterval(mathTimer); alert("¡Tiempo! Puntos: "+mathScore); goMenu(); }
+        }, 100);
+
+        let limit = mathDiff=='easy'?10 : (mathDiff=='medium'?50:100);
+        let n1 = Math.floor(Math.random()*limit)+1, n2 = Math.floor(Math.random()*limit)+1;
+        let isMinus = mathDiff=='hard' && Math.random()>0.5;
+        
+        if(isMinus) {
+            if(n1<n2) [n1,n2]=[n2,n1]; mathAnswer=n1-n2; document.getElementById('math-problem').innerText=`${n1} - ${n2} = ?`;
+        } else {
+            mathAnswer=n1+n2; document.getElementById('math-problem').innerText=`${n1} + ${n2} = ?`;
+        }
+
+        let opts=[mathAnswer];
+        while(opts.length<4) {
+            let fake=mathAnswer+Math.floor(Math.random()*10)-5;
+            if(fake>=0 && !opts.includes(fake)) opts.push(fake);
+        }
+        opts.sort(()=>Math.random()-0.5);
+        
+        window.checkMath = function(ans) {
+            if(ans==mathAnswer) { mathScore+=10; document.getElementById('math-score').innerText="Puntos: "+mathScore; nextMathProblem(); }
+            else { alert("¡Incorrecto! Era "+mathAnswer); goMenu(); }
+        };
+        document.getElementById('math-options').innerHTML = opts.map(o=>`<button class="math-option" onclick="checkMath(${o})">${o}</button>`).join('');
+    }
+
+    // ==========================================
+    // 5 & 6. LECTURA Y DELETREO (Funcionales)
+    // ==========================================
+    const readDB = [{e:'🍌',ok:'BANANA',bad:['MANZANA','PERA']},{e:'🎈',ok:'GLOBO',bad:['PELOTA','SOL']},{e:'🚲',ok:'BICICLETA',bad:['AUTO','MOTO']},{e:'📚',ok:'LIBRO',bad:['LAPIZ','MESA']}];
+    function startReading(){ ensureMusicPlaying(); showScreen('read-screen'); nextReading(); }
+    function nextReading(){
+        const d = readDB[Math.floor(Math.random()*readDB.length)];
+        document.getElementById('read-emoji').innerText=d.e;
+        let opts=[d.ok,...d.bad].sort(()=>Math.random()-0.5);
+        document.getElementById('read-options').innerHTML=opts.map(w=>`<button class="word-btn" onclick="if('${w}'=='${d.ok}'){alert('¡Bien!');nextReading();}else{alert('Ups');}">${w}</button>`).join('');
+    }
+
+    const spellDB = [{e:'🌞',w:'SOL',i:1},{e:'👑',w:'CORONA',i:3},{e:'🚗',w:'AUTO',i:0},{e:'🐶',w:'PERRO',i:2},{e:'⚽',w:'GOL',i:2}];
+    let spellScore=0;
+    function startSpelling(){ ensureMusicPlaying(); showScreen('spell-screen'); spellScore=0; document.getElementById('spell-score').innerText="0"; nextSpell(); }
+    function nextSpell(){
+        const d = spellDB[Math.floor(Math.random()*spellDB.length)];
+        document.getElementById('spell-emoji').innerText=d.e;
+        let arr=d.w.split(''); arr[d.i]='_'; document.getElementById('spell-word').innerText=arr.join(' ');
+        let opts=[d.w[d.i]]; const abc="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        while(opts.length<3){ let r=abc[Math.floor(Math.random()*abc.length)]; if(!opts.includes(r))opts.push(r); }
+        opts.sort(()=>Math.random()-0.5);
+        document.getElementById('spell-options').innerHTML=opts.map(l=>`<button class="letter-btn" onclick="if('${l}'=='${d.w[d.i]}'){spellScore++;document.getElementById('spell-score').innerText=spellScore;document.getElementById('spell-word').innerText='${d.w}';setTimeout(nextSpell,1000);}else{alert('Ups');}">${l}</button>`).join('');
+    }
+
 </script>
 </body>
 </html>
